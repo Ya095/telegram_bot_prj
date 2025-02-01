@@ -1,10 +1,9 @@
+from config import bot_token
 import asyncio
 import logging
 from aiogram import Bot, Dispatcher, types
 from aiogram.filters import CommandStart, Command
 
-
-bot_token = "6882998012:AAHkbFQsfwOZviV4OKX9GftN9IJmj54Qk7w"
 
 dp = Dispatcher()
 

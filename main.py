@@ -9,9 +9,15 @@ bot_token = "6882998012:AAHkbFQsfwOZviV4OKX9GftN9IJmj54Qk7w"
 dp = Dispatcher()
 
 
-@dp.message(CommandStart)
+@dp.message(CommandStart())
 async def handle_start(message: types.Message):
     await message.answer(text=f"Hello, {message.from_user.full_name}!")
+
+
+@dp.message(Command("help"))
+async def handle_help(message: types.Message):
+    text = "I'm an echo bot.\nSend me any message!"
+    await message.answer(text=text)
 
 
 @dp.message()

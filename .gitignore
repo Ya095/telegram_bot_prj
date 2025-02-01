@@ -111,9 +111,6 @@ acs-*.bib
 # endnotes
 *.ent
 
-# fixme
-*.lox
-
 # feynmf/feynmp
 *.mf
 *.mp
@@ -181,8 +178,6 @@ acs-*.bib
 
 # knitr
 *-concordance.tex
-# TODO Uncomment the next line if you use knitr and want to ignore its generated tikz files
-# *.tikz
 *-tikzDictionary
 
 # listings
@@ -270,9 +265,6 @@ pythontex-files-*/
 # vhistory
 *.hst
 *.ver
-
-# easy-todo
-*.lod
 
 # xcolor
 *.xcp

@@ -1,3 +1,5 @@
+from linecache import cache
+
 from config import settings
 import asyncio
 import logging
@@ -57,11 +59,22 @@ async def handle_command_code(message: types.Message):
 # def is_photo(message: types.Message):
 #     return message.photo
 
+filters_media = F.photo | F.video | F.document
+
 
 # @dp.message(is_photo)
-@dp.message(F.photo, ~F.caption)
+# @dp.message(F.photo, ~F.caption)
+@dp.message(filters_media, ~F.caption)
 async def handle_photo_wo_caption(message: types.Message):
     await message.reply("I can't understand msg!")
+
+
+@dp.message(F.from_user.id.in_({693795034}), F.text == "secret")
+async def admin_msg(message: types.Message):
+    await message.bot.send_message(
+        text="Admin",
+        chat_id=message.chat.id,
+    )
 
 
 @dp.message()

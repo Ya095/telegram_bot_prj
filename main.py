@@ -1,7 +1,7 @@
 from config import settings
 import asyncio
 import logging
-from aiogram import Bot, Dispatcher, types
+from aiogram import Bot, Dispatcher, types, F
 from aiogram.filters import CommandStart, Command
 from aiogram.utils import markdown
 from aiogram.enums import ParseMode
@@ -16,27 +16,11 @@ async def handle_start(message: types.Message):
     url = "https://e7.pngegg.com/pngimages/234/79/png-clipart-black-robot-face-illustration-robotics-technology-computer-icons-internet-bot-robotics-humanoid-robot-industrial-robot-thumbnail.png"
     await message.answer(
         text=f"{markdown.hide_link(url=url)}Hello, {markdown.hbold(message.from_user.full_name)}!",
-        parse_mode=ParseMode.HTML,
     )
 
 
 @dp.message(Command("help"))
 async def handle_help(message: types.Message):
-    # сделать жирным шрифт (вариант 1)
-    # text = "I'm an echo bot.\nSend me any message!"
-    # entity_bold = types.MessageEntity(
-    #     type="bold",
-    #     offset=len("I'm an echo bot.\nSend me "),
-    #     length=3,
-    # )
-    # entities = [entity_bold]
-    # await message.answer(
-    #     text=text,
-    #     entities=entities,
-    # )
-
-    # вариант 2
-    # text = "I'm an echo bot\\.\nSend me *any* message\\!"
     text = markdown.text(
         markdown.markdown_decoration.quote("I'm an echo bot."),
         markdown.text(
@@ -49,11 +33,11 @@ async def handle_help(message: types.Message):
     )
     await message.answer(
         text=text,
-        # parse_mode=ParseMode.MARKDOWN_V2,
+        parse_mode=ParseMode.MARKDOWN_V2,
     )
 
 
-@dp.message(Command("code"))
+@dp.message(Command("code", prefix="!"))
 async def handle_command_code(message: types.Message):
     text = markdown.text(
         "Here's Python code:",
@@ -64,7 +48,20 @@ async def handle_command_code(message: types.Message):
         ),
         sep="\n",
     )
-    await message.answer(text=text)
+    await message.answer(
+        text=text,
+        parse_mode=ParseMode.MARKDOWN_V2,
+    )
+
+
+# def is_photo(message: types.Message):
+#     return message.photo
+
+
+# @dp.message(is_photo)
+@dp.message(F.photo, ~F.caption)
+async def handle_photo_wo_caption(message: types.Message):
+    await message.reply("I can't understand msg!")
 
 
 @dp.message()
@@ -86,25 +83,16 @@ async def echo_msg(message: types.Message):
         )
 
     try:
-        await message.send_copy(chat_id=message.chat.id)
+        # await message.send_copy(chat_id=message.chat.id)
+        await message.forward(chat_id=message.chat.id)
     except TypeError:
         await message.reply(text="Something new :)")
-
-    # if message.text:
-    #     await message.reply(text=message.text)  # отвечает на конкретное сообщение
-    # elif message.sticker:
-    #     await message.bot.send_sticker(
-    #         chat_id=message.chat.id,
-    #         sticker=message.sticker.file_id,
-    #     )
-    # else:
-    #     await message.reply(text="Something new :)")
 
 
 async def main():
     bot = Bot(
         token=settings.bot_token,
-        default=DefaultBotProperties(parse_mode=ParseMode.MARKDOWN_V2),
+        default=DefaultBotProperties(parse_mode=ParseMode.HTML),
     )
     logging.basicConfig(level=logging.INFO)
     # проверка на новые события (в бесконечном цикле)

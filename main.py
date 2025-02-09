@@ -1,12 +1,10 @@
-from linecache import cache
-
 from config import settings
 import asyncio
 import logging
 from aiogram import Bot, Dispatcher, types, F
 from aiogram.filters import CommandStart, Command
 from aiogram.utils import markdown
-from aiogram.enums import ParseMode
+from aiogram.enums import ParseMode, ChatAction
 from aiogram.client.default import DefaultBotProperties
 
 
@@ -66,7 +64,47 @@ filters_media = F.photo | F.video | F.document
 # @dp.message(F.photo, ~F.caption)
 @dp.message(filters_media, ~F.caption)
 async def handle_photo_wo_caption(message: types.Message):
-    await message.reply("I can't understand msg!")
+    await message.bot.send_photo(
+        chat_id=message.chat.id,
+        photo=message.photo[-1].file_id,
+    )
+    # await message.reply("I can't understand msg!")
+    caption = "I can't understand msg!"
+    await message.reply_photo(
+        photo=message.photo[-1].file_id,
+        caption=caption,
+    )
+
+
+@dp.message(Command("pic"))
+async def handle_pic_msg(message: types.Message):
+    # url = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTenp49lG3DDWsWxhb2eiwRcDXva9Cs1aG7hA&s"
+    big_file = "media/220325case013.jpg"
+    # file_path = "media/img_1.png"
+
+    # await message.reply_photo(
+    #     # photo=url,
+    #     photo=types.FSInputFile(
+    #         path=file_path,
+    #         filename="cat_file.png",
+    #     ),
+    #     caption="Cat photo.",
+    # )
+
+    # показываем, что происходит какое-то действие
+    # (пока готовится большой файл)
+    await message.bot.send_chat_action(
+        chat_id=message.chat.id,
+        action=ChatAction.UPLOAD_DOCUMENT,
+    )
+
+    # если изображение большое - отправить как файл
+    await message.reply_document(
+        document=types.FSInputFile(
+            path=big_file,
+            filename="cat_2.jpg"
+        )
+    )
 
 
 @dp.message(F.from_user.id.in_({693795034}), F.text == "secret")

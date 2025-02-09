@@ -1,5 +1,6 @@
 from config import settings
 import asyncio
+import io
 import logging
 from aiogram import Bot, Dispatcher, types, F
 from aiogram.filters import CommandStart, Command
@@ -103,6 +104,19 @@ async def handle_pic_msg(message: types.Message):
         document=types.FSInputFile(
             path=big_file,
             filename="cat_2.jpg"
+        )
+    )
+
+
+@dp.message(Command("text"))
+async def text_file_handler(message: types.Message):
+    file = io.StringIO()
+    file.write("Hello world!\n")
+    file.write("This is text file\n")
+    await message.reply_document(
+        document=types.BufferedInputFile(
+            file=file.getvalue().encode(),  # вернет строку в байтах
+            filename="text.txt",
         )
     )
 

@@ -2,6 +2,7 @@ from config import settings
 import asyncio
 import io
 import logging
+import aiohttp
 from aiogram import Bot, Dispatcher, types, F
 from aiogram.filters import CommandStart, Command
 from aiogram.utils import markdown
@@ -117,6 +118,26 @@ async def text_file_handler(message: types.Message):
         document=types.BufferedInputFile(
             file=file.getvalue().encode(),  # вернет строку в байтах
             filename="text.txt",
+        )
+    )
+
+
+# Загрузка файла без сохранения на диск
+@dp.message(Command("pic_file"))
+async def send_pic_file_buffered(message: types.Message):
+    await message.bot.send_chat_action(
+        chat_id=message.chat.id,
+        action=ChatAction.UPLOAD_DOCUMENT,
+    )
+    url = "https://www.cats.org.uk/media/13139/220325case013.jpg"
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url, ssl=False) as response:
+            result_bytes = await response.read()
+
+    await message.reply_document(
+        document=types.BufferedInputFile(
+            file=result_bytes,
+            filename="big-cat-f.jpeg",
         )
     )
 

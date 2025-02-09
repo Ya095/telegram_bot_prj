@@ -8,6 +8,7 @@ from aiogram.filters import CommandStart, Command
 from aiogram.utils import markdown
 from aiogram.enums import ParseMode, ChatAction
 from aiogram.client.default import DefaultBotProperties
+from aiogram.utils.chat_action import ChatActionSender
 
 
 dp = Dispatcher()
@@ -125,21 +126,30 @@ async def text_file_handler(message: types.Message):
 # Загрузка файла без сохранения на диск
 @dp.message(Command("pic_file"))
 async def send_pic_file_buffered(message: types.Message):
-    await message.bot.send_chat_action(
+    # await message.bot.send_chat_action(
+    #     chat_id=message.chat.id,
+    #     action=ChatAction.UPLOAD_DOCUMENT,
+    # )
+
+    # долгий чат экшен
+    file_sender = ChatActionSender(
+        bot=message.bot,
         chat_id=message.chat.id,
         action=ChatAction.UPLOAD_DOCUMENT,
     )
     url = "https://www.cats.org.uk/media/13139/220325case013.jpg"
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url, ssl=False) as response:
-            result_bytes = await response.read()
 
-    await message.reply_document(
-        document=types.BufferedInputFile(
-            file=result_bytes,
-            filename="big-cat-f.jpeg",
+    async with file_sender:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url, ssl=False) as response:
+                result_bytes = await response.read()
+
+        await message.reply_document(
+            document=types.BufferedInputFile(
+                file=result_bytes,
+                filename="big-cat-f.jpeg",
+            )
         )
-    )
 
 
 @dp.message(F.from_user.id.in_({693795034}), F.text == "secret")

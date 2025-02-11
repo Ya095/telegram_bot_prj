@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     )
 
     bot_token: str
+    admin_ids: frozenset[int] = frozenset({42, 693795034})
 
 
 settings = Settings()

@@ -1,10 +1,25 @@
-from aiogram import Router, types
+from aiogram import Router, types, F
+from aiogram.types import ReplyKeyboardRemove
+
+from keyboards.common_keyboards import ButtonText
 
 router = Router(name=__name__)
 
 
+@router.message(F.text == ButtonText.BYE)
+async def handle_bye_msg(message: types.Message):
+    await message.answer(
+        text="See you later!",
+        reply_markup=ReplyKeyboardRemove(),
+    )
+
+
 @router.message()
 async def echo_msg(message: types.Message):
+    if message.poll:
+        await message.forward(chat_id=message.chat.id)
+        return
+
     await message.bot.send_message(
         chat_id=message.chat.id,
         text="Wait a second...",

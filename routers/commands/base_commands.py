@@ -3,13 +3,20 @@ from aiogram.enums import ParseMode
 from aiogram.filters import CommandStart, Command
 from aiogram.utils import markdown
 
-from keyboards.common_keyboards import ButtonText, get_on_start_keyboard, get_actions_keyboard
+from keyboards.common_keyboards import (
+    ButtonText,
+    get_on_start_keyboard,
+    get_actions_keyboard,
+)
+from keyboards.inline_keyboards.info_kb import build_info_kb
 
 router = Router(name=__name__)
 
 
 @router.message(CommandStart())
 async def handle_start(message: types.Message):
+
+    print("command text:", repr(message.text))
     url = "https://e7.pngegg.com/pngimages/234/79/png-clipart-black-robot-face-illustration-robotics-technology-computer-icons-internet-bot-robotics-humanoid-robot-industrial-robot-thumbnail.png"
     await message.answer(
         text=f"{markdown.hide_link(url=url)}Hello, {markdown.hbold(message.from_user.full_name)}!",
@@ -42,4 +49,13 @@ async def handle_more(message: types.Message):
     await message.answer(
         text="Choose action:",
         reply_markup=markup,
+    )
+
+
+@router.message(Command("info", prefix="!/"))
+async def handle_info(message: types.Message):
+
+    await message.answer(
+        text="Ссылки и прочие ресурсы:",
+        reply_markup=build_info_kb(),
     )

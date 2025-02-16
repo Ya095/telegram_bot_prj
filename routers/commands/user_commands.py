@@ -7,6 +7,9 @@ from aiogram.filters import Command
 from aiogram.utils import markdown
 from aiogram.utils.chat_action import ChatActionSender
 
+from keyboards.inline_keyboards.actions_kb import build_action_kb
+from keyboards.inline_keyboards.shop_kb import build_shop_kb
+
 router = Router(name=__name__)
 
 
@@ -81,3 +84,19 @@ async def send_pic_file_buffered(message: types.Message):
                 filename="big-cat-f.jpeg",
             )
         )
+
+
+@router.message(Command("actions"))
+async def send_action_msg_w_kb(message: types.Message):
+    await message.answer(
+        text="Your actions:",
+        reply_markup=build_action_kb(),
+    )
+
+
+@router.message(Command("shop"))
+async def send_shop_msg_kb(message: types.Message):
+    await message.answer(
+        text="Your shop actions:",
+        reply_markup=build_shop_kb(),
+    )

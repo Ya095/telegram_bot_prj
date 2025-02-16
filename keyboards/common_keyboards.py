@@ -34,6 +34,7 @@ def get_actions_keyboard() -> ReplyKeyboardMarkup:
     contact_btn = KeyboardButton(text="Send my phone", request_contact=True)
     poll_btn = KeyboardButton(text="Send poll", request_poll=KeyboardButtonPollType())
     bye_btn = KeyboardButton(text=ButtonText.BYE)
+
     markup = ReplyKeyboardMarkup(
         keyboard=[
             [location_btn, contact_btn],

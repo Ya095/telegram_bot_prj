@@ -1,8 +1,11 @@
+from typing import Iterable
+
 from aiogram.types import (
     ReplyKeyboardMarkup,
     KeyboardButton,
     KeyboardButtonPollType,
 )
+from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
 
 class ButtonText:
@@ -45,3 +48,13 @@ def get_actions_keyboard() -> ReplyKeyboardMarkup:
     )
 
     return markup
+
+
+def build_select_keyboard(options: Iterable[str]) -> ReplyKeyboardMarkup:
+    builder = ReplyKeyboardBuilder()
+    for option in options:
+        builder.button(text=option)
+
+    builder.adjust(1)
+
+    return builder.as_markup(resize_keyboard=True)
